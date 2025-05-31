@@ -15,7 +15,7 @@ SENHA = os.getenv("SENHA_HIPLAT")
 RELATORIO_URL = os.getenv("RELATORIO_URL")
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_SERVICE_KEY = os.getenv("SUPABASE_SERVICE_KEY")
-TABLE_NAME = "public.hiplatform_tokens"
+TABLE_NAME = "hiplatform_tokens"
 BUCKET_NAME = "hiplatform_tokens"
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
