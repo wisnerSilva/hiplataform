@@ -1,0 +1,39 @@
+name: Coletar Token
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  coletar-token:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Instalar dependências do sistema
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip curl gnupg             libx11-6 libx11-xcb1 libxcb1 libnss3 libxcomposite1 libxdamage1 libxrandr2 libxss1 libgtk-3-0 libasound2
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y
+
+      - name: Instalar dependências do Python
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Executar script de coleta
+        env:
+          EMAIL_HIPLAT: ${{ secrets.EMAIL_HIPLAT }}
+          SENHA_HIPLAT: ${{ secrets.SENHA_HIPLAT }}
+          RELATORIO_URL: ${{ secrets.RELATORIO_URL }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: python coletar_token.py
