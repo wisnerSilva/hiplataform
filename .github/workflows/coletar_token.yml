@@ -1,24 +1,33 @@
 name: Coletar Token Workflow
+
 on:
-  workflow_dispatch:        # permite botão “Run workflow” manual
+  workflow_dispatch:        # Permite rodar manualmente via botão “Run workflow”
+  push:
+    branches: [ main ]      # Dispara sempre que você der push na branch main
   schedule:
-    - cron: '0 */2 * * *'   # roda a cada 2 horas, no minuto zero
+    - cron: '0 */2 * * *'   # Agendamento: a cada 2 horas, minuto zero
 
 jobs:
   run_coletar_token:
     runs-on: ubuntu-24.04
+
     steps:
+      # 1) Baixa o código do repositório
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # 2) Configura o Python 3.10
       - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
+      # 3) Instala dependências do sistema necessárias para Chrome + Selenium
       - name: Install system dependencies (Chrome & Selenium)
         run: |
           sudo apt-get update
+
+          # Instala bibliotecas “t64” no Ubuntu 24.04
           sudo apt-get install -y \
             libgtk2.0-0t64 \
             libgtk-3-0t64 \
@@ -31,19 +40,22 @@ jobs:
             xauth \
             xvfb
 
+      # 4) Baixa e instala o Google Chrome
       - name: Install Google Chrome
         run: |
           wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y
 
+      # 5) Instala bibliotecas Python do seu requirements.txt
       - name: Install Python dependencies
-        run: python -m pip install -r requirements.txt
+        run: python -m pip install --upgrade pip && pip install -r requirements.txt
 
+      # 6) Executa o script de coleta, passando o secret SUPABASE_SERVICE_KEY
       - name: Run token collection script
         run: python coletar_token.py
         env:
-          EMAIL_HIPLAT: ${{ secrets.EMAIL_HIPLAT }}
-          SENHA_HIPLAT: ${{ secrets.SENHA_HIPLAT }}
-          RELATORIO_URL: ${{ secrets.RELATORIO_URL }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          EMAIL_HIPLAT:         ${{ secrets.EMAIL_HIPLAT }}
+          SENHA_HIPLAT:         ${{ secrets.SENHA_HIPLAT }}
+          RELATORIO_URL:        ${{ secrets.RELATORIO_URL }}
+          SUPABASE_URL:         ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
