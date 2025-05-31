@@ -5,7 +5,7 @@ on:
   push:
     branches: [ main ]      # Dispara sempre que houver push em main
   schedule:
-    - cron: '0 */2 * * *'   # Agendado: a cada 2 horas, no minuto zero
+    - cron: '0 */4 * * *'   # Agendado: a cada 2 horas, no minuto zero
 
 jobs:
   run_coletar_token:
