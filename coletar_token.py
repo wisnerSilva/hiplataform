@@ -56,15 +56,27 @@ def fazer_login(driver, email, senha, timeout=20):
     wait.until(EC.url_contains("/products"))
 
 def coletar_token(email, senha, url, max_wait=60):
+    print("🚀 Iniciando coleta de token via Selenium")
     driver = iniciar_driver()
     try:
+        print("➡️ Realizando login")
         fazer_login(driver, email, senha)
+        print("➡️ Navegando até o relatório")
         driver.get(url)
         wait = WebDriverWait(driver, max_wait)
+        print("🕵️ Tentando extrair token do localStorage")
         token = wait.until(lambda d: d.execute_script(
             "return window.localStorage.getItem('dt.admin.token');"
         ))
+        print(f"✅ TOKEN ENCONTRADO: {token}")
         return token
+    except Exception as e:
+        print("❌ Erro ao coletar token:", str(e))
+        return None
+    finally:
+        driver.quit()
+        print("🌐 Navegador fechado")
+
     except Exception as e:
         print("Erro ao coletar token:", e)
         return None
