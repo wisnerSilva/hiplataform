@@ -1,6 +1,7 @@
 import os
 import uuid
 import requests
+import pandas as pd
 from datetime import datetime, timezone
 from selenium import webdriver
 from selenium.webdriver.common.by import By
